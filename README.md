@@ -28,24 +28,29 @@ Building this project requires splitting the architecture into two distinct engi
 
 ### 🔹 The Dictionary Parser
 The program must parse the dictionary given as a resource, allowing its values to be used to print the result. 
-1. **File Reading:** We use system calls to open and read the `.dict` file into dynamically allocated memory.
+1. **File Reading:** We use system calls to open and read the `.dict` file into a dynamically allocated linked list.
 2. **Strict Formatting:** The parser processes the file line by line, looking for a numeric key, a colon, and the corresponding string value. 
 3. **Trimming:** The parser must trim all excess spaces before and after the values to ensure clean output.
-4. **Error Handling:** If there is an invalid line format, a missing initial key, or a memory failure, the program gracefully catches it and outputs a standard dictionary error.
+4. **Error Handling:** If there is an invalid line format, a missing initial key, or a memory failure, the program gracefully catches it, frees all memory, and outputs a standard dictionary error.
 
 ### 🔹 The Number Translator
-Once the dictionary is safely stored in memory (often as an array of structs or a linked list), the translation algorithm begins.
-1. **Input Validation:** The program verifies that the user's argument is a valid positive number. If not, it throws a standard error.
+Once the dictionary is safely stored in memory, the recursive translation algorithm begins.
+1. **Input Validation:** The program verifies that the user's argument is a valid positive number, trimming leading zeros and validating digits.
 2. **Chunking (Modulo 1000):** Numbers are read in chunks of three (e.g., millions, thousands, hundreds). The algorithm recursively divides the input by 1000, isolating chunks like `123` or `456`.
 3. **Hundreds, Tens, and Ones:** Inside each chunk, the algorithm breaks the number down further (e.g., `456` becomes `4` + `hundred` + `50` + `6`).
 4. **Dictionary Lookup:** Every isolated piece is searched for inside the parsed dictionary map and printed to the standard output. 
+
+### ⭐ Bonus Features Implemented
+* **Standard Input Parsing:** If no arguments are provided to the executable, the program dynamically reads the requested number from standard input (`stdin`) using a custom `get_next_line` implementation.
+* **Syntax Injection:** The recursive algorithm is designed to inject grammatically correct hyphens (e.g., `forty-two`), commas for large magnitudes (e.g., `one million, two hundred thousand`), and the "and" conjunction (e.g., `one hundred and forty-two`) as requested in the bonus section.
+* **Custom Language Dictionaries:** The program fully supports passing a custom `.dict` file as the first argument, allowing it to parse and translate numbers into entirely different languages.
 
 ---
 
 ## 🛠️ Instructions
 
 ### 🧪 Compilation & Testing
-This project requires a **[`Makefile`](ex00/Makefile)** to compile your project using standard rules.
+This project utilizes a professional directory structure (**[`srcs/`](ex00/srcs/)**, **[`includes/`](ex00/includes/)**, `objs/`) and requires a **[`Makefile`](ex00/Makefile)** to compile.
 
 1. **Clone the repository:**
    ```bash
@@ -62,7 +67,7 @@ This project requires a **[`Makefile`](ex00/Makefile)** to compile your project 
    Pass a single numeric argument to translate it using the default dictionary.
    ```bash
    ./rush-02 42
-   # Expected Output: forty two
+   # Expected Output: forty-two
    ```
 
 4. **Execute with a custom dictionary:**
@@ -72,7 +77,15 @@ This project requires a **[`Makefile`](ex00/Makefile)** to compile your project 
    # Expected Output: one hundred thousand
    ```
 
-5. **Clean up:**
+5. **Execute via Standard Input (Bonus):**
+   Run the executable with no arguments, type a number, and press `Enter`.
+   ```bash
+   ./rush-02
+   1000000
+   # Expected Output: one million
+   ```
+
+6. **Clean up:**
    ```bash
    make fclean
    ```
@@ -92,14 +105,14 @@ Before writing any code, every file must start with the standard 42 header. `nor
 /*   By: maaugust <maaugust@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 23:20:51 by maaugust          #+#    #+#             */
-/*   Updated: 2026/03/09 23:20:53 by maaugust         ###   ########.fr       */
+/*   Updated: 2026/03/17 00:15:14 by maaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 ```
 
-Run the following command before pushing:
+Run the following command before pushing to evaluate the source and include directories:
 ```bash
-norminette -R CheckForbiddenSourceHeader *.c *.h
+norminette -R CheckForbiddenSourceHeader srcs/ includes/
 ```
 
 ---
