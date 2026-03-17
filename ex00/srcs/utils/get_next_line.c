@@ -6,7 +6,7 @@
 /*   By: maaugust <maaugust@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/11 13:55:55 by maaugust          #+#    #+#             */
-/*   Updated: 2026/03/16 23:47:51 by maaugust         ###   ########.fr       */
+/*   Updated: 2026/03/17 01:29:54 by maaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,6 @@ char	*get_next_line(int fd)
 	static char	*buffer[FD_SIZE];
 	char		*new_line;
 	ssize_t		n_bytes;
-	size_t		len;
 	int			i;
 
 	new_line = NULL;
@@ -131,13 +130,13 @@ char	*get_next_line(int fd)
 		new_line = ft_str_realloc(&new_line, i);
 		if (!new_line)
 			return (free_memory(&buffer[fd]));
-		len = ft_strlen(new_line);
-		ft_strlcpy(new_line + len, buffer[fd], i + 1);
+		ft_strlcpy(new_line + ft_strlen(new_line), buffer[fd], i + 1);
 		ft_strlcpy(buffer[fd], buffer[fd] + i, n_bytes - i + 1);
-		len += i;
-		if (len > 0 && new_line[len - 1] == '\n')
+		if (ft_strchr(new_line, '\n'))
 			break ;
 		n_bytes = read_line(fd, &buffer[fd], &new_line);
 	}
+	if (buffer[fd] && buffer[fd][0] == '\0')
+		free_memory(&buffer[fd]);
 	return (new_line);
 }
